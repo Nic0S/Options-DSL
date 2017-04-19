@@ -1,6 +1,3 @@
-/**
-  * Created by nicos on 4/17/17.
-  */
 import org.apache.commons.math3.distribution.NormalDistribution
 
 class Option {
@@ -11,36 +8,60 @@ class Option {
   var volatility : Double = -1
   var isCall = true
 
-  val interestRate = 0.01
+  var interestRate = 0.01
 
   def strike (p : Double) : Option = {
-    strikePrice = p
-    return this
+    val modified = copy()
+    modified.strikePrice = p
+    modified
   }
 
   def expiration (d : Int) : Option = {
-    daysToExp = d
-    return this
+    val modified = copy()
+    modified.daysToExp = d
+    modified
   }
 
   def ticker (t: String) : Option = {
-    ticker = t
-    return this
+    val modified = copy()
+    modified.ticker = t
+    modified
   }
 
   def contracts (c : Int) : Option = {
-    contracts = c
-    return this
+    val modified = copy()
+    modified.contracts = c
+    modified
   }
 
   def volatility (v : Double) : Option = {
-    volatility = v
-    return this
+    val modified = copy()
+    modified.volatility = v
+    modified
   }
 
   def setIsCall (c : Boolean) : Option = {
-    isCall = c
-    return this
+    val modified = copy()
+    modified.isCall = c
+    modified
+  }
+
+  def irate (i : Double) : Option = {
+    val modified = copy()
+    modified.interestRate = i
+    modified
+  }
+
+  def copy () : Option = {
+    val copy = new Option
+    copy.ticker = ticker
+    copy.strikePrice = strikePrice
+    copy.daysToExp = daysToExp
+    copy.contracts = contracts
+    copy.volatility = volatility
+    copy.isCall = isCall
+    copy.interestRate = interestRate
+    copy
   }
 
   def calculatePrice (underlyingPrice : Double) : Double = {
@@ -60,6 +81,18 @@ class Option {
 
     contracts * (underlyingPrice * dist.cumulativeProbability(d1) - strike * Math.exp(-interestRate * t) *
       dist.cumulativeProbability(d2))
+
+
+  }
+
+  override def toString() : String = {
+    var typeText = ""
+    if (isCall) {
+      typeText = "Call"
+    } else {
+      typeText = "Put"
+    }
+    contracts + " " + ticker + " " + typeText + " | Strike: " + strikePrice + " | expiration: " + daysToExp
   }
 
 }

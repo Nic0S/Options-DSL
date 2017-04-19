@@ -8,17 +8,24 @@ class OptionsDSL {
   object Option {
 
     def put (ticker: String) : Option = {
-      var op = new Option
+      val op = new Option
       op setIsCall false
       op.ticker = ticker
       return op
     }
 
     def call (ticker: String) : Option = {
-      var op = new Option
+      val op = new Option
       op setIsCall true
       op.ticker = ticker
       return op
+    }
+  }
+
+  object Spread {
+    def of (op : Option) : Spread = {
+      val spread = new Spread
+      spread and op
     }
   }
 }
