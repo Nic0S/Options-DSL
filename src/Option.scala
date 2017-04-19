@@ -4,9 +4,10 @@ class Option {
   var ticker = ""
   var strikePrice : Double = -1
   var daysToExp : Int = -1
-  var contracts : Int = 0
+  var contracts : Int = 1
   var volatility : Double = -1
   var isCall = true
+  var costBasis : Double = 0
 
   var interestRate = 0.01
 
@@ -52,6 +53,12 @@ class Option {
     modified
   }
 
+  def cost (c : Double) : Option = {
+    val modified = copy()
+    modified.costBasis = c
+    modified
+  }
+
   def copy () : Option = {
     val copy = new Option
     copy.ticker = ticker
@@ -61,10 +68,14 @@ class Option {
     copy.volatility = volatility
     copy.isCall = isCall
     copy.interestRate = interestRate
-    copy
+    copy.costBasis = costBasis
   }
 
   def calculatePrice (underlyingPrice : Double) : Double = {
+    require(strikePrice != -1, "Strike price is not set on option: " + toString())
+    require(daysToExp != -1, "Days to expiration is not set on option: " + toString())
+    require(volatility != -1, "Volatility is not set on option: " + toString())
+
     val dist = new NormalDistribution()
     val t = daysToExp / 365f
 
@@ -81,8 +92,13 @@ class Option {
 
     contracts * (underlyingPrice * dist.cumulativeProbability(d1) - strike * Math.exp(-interestRate * t) *
       dist.cumulativeProbability(d2))
+  }
 
+  def calculatePL (underlyingPrice : Double) : Double = {
+    require(costBasis != 0, "Cost basis not set on option: " + toString())
 
+    val price = calculatePrice(underlyingPrice)
+    price - costBasis
   }
 
   override def toString() : String = {
