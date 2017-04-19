@@ -4,11 +4,9 @@
 object Tester extends OptionsDSL {
   def main ( args: Array[String]) = {
     // Option.put("NVDA").strike(95.5).expiration(10)
-    val x = Option put "NVDA" strike 95.5 expiration 10 contracts 2
-    print(x.ticker)
-    print(x.strikePrice)
+    val x = Option call "NVDA" strike 100 expiration 10 contracts -2 volatility .25
+    print(x calculatePrice 120)
 
-    // Is it possible to get:
-    // Option.put().ticker("NVDA").strike(95.5).expiration(10)
+
   }
 }
