@@ -9,7 +9,7 @@ class OptionsDSL {
 
     def put (ticker: String) : Option = {
       val op = new Option
-      op setIsCall false
+      op.isCall = false
       op.ticker = ticker
       return op
     }

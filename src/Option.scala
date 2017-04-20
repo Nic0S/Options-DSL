@@ -69,6 +69,13 @@ class Option {
     copy.isCall = isCall
     copy.interestRate = interestRate
     copy.costBasis = costBasis
+    copy
+  }
+
+  def fillCost (underlyingPrice : Double) : Option = {
+    val modified = copy()
+    modified.costBasis = modified calculatePrice underlyingPrice
+    modified
   }
 
   def calculatePrice (underlyingPrice : Double) : Double = {
@@ -79,19 +86,19 @@ class Option {
     val dist = new NormalDistribution()
     val t = daysToExp / 365f
 
-    var strike : Double = -1
-    if (isCall) {
-      strike = strikePrice
-    } else {
-      strike = underlyingPrice + (underlyingPrice - strikePrice)
-    }
-
-    val d1 = (Math.log(underlyingPrice / strike) + (interestRate + volatility * volatility / 2) * t) /
+    val d1 = (Math.log(underlyingPrice / strikePrice) + (interestRate + volatility * volatility / 2) * t) /
       (volatility * Math.sqrt(t))
     val d2 = d1 - volatility * Math.sqrt(t)
 
-    contracts * (underlyingPrice * dist.cumulativeProbability(d1) - strike * Math.exp(-interestRate * t) *
-      dist.cumulativeProbability(d2))
+    var price : Double = underlyingPrice * dist.cumulativeProbability(d1) - strikePrice * Math.exp(-interestRate * t) *
+      dist.cumulativeProbability(d2)
+
+    // put = strike + call - stock
+    if (!isCall) {
+      price = strikePrice + price - underlyingPrice
+    }
+
+    100 * contracts * price
   }
 
   def calculatePL (underlyingPrice : Double) : Double = {
