@@ -74,11 +74,11 @@ class Option {
 
   def fillCost (underlyingPrice : Double) : Option = {
     val modified = copy()
-    modified.costBasis = modified calculatePrice underlyingPrice
+    modified.costBasis = modified calculateValue underlyingPrice
     modified
   }
 
-  def calculatePrice (underlyingPrice : Double) : Double = {
+  def calculateValue (underlyingPrice : Double) : Double = {
     require(strikePrice != -1, "Strike price is not set on option: " + toString())
     require(daysToExp != -1, "Days to expiration is not set on option: " + toString())
     require(volatility != -1, "Volatility is not set on option: " + toString())
@@ -104,7 +104,7 @@ class Option {
   def calculatePL (underlyingPrice : Double) : Double = {
     require(costBasis != 0, "Cost basis not set on option: " + toString())
 
-    val price = calculatePrice(underlyingPrice)
+    val price = calculateValue(underlyingPrice)
     price - costBasis
   }
 
