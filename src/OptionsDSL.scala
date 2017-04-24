@@ -27,6 +27,23 @@ class OptionsDSL {
       val spread = new Spread
       spread and op
     }
+
+    def short (count : Integer) : SpreadBuilder = {
+      val sb = new SpreadBuilder
+      sb.count = - count
+      sb
+    }
+  }
+
+  object Stats {
+    def of (op : Option) : Unit = {
+      of(new Spread and op)
+    }
+
+    def of (sp : Spread) : Unit = {
+      println("Max gain: " + sp.maxgain() + " at underlying price: " + sp.maxXPrice)
+      println("Max loss: " + sp.maxloss() + " at underlying price: " + sp.maxXPrice)
+    }
   }
 
   def maxloss (sp : Spread) : Double = {

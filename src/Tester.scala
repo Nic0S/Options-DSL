@@ -7,8 +7,10 @@ object Tester extends OptionsDSL {
     val put = Option put "NVDA" strike 90 expiration 30 contracts 1 volatility .4 fillCost 100
 
 
-    val spread = Spread of call and put
+    val spread  :Spread = Spread short 3 of call long 4 of put
 
-    
+    Stats of spread
+
+
   }
 }

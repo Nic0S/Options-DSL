@@ -15,6 +15,20 @@ class Spread {
     copy
   }
 
+  def short (count : Integer) : SpreadBuilder = {
+    val sb = new SpreadBuilder
+    sb.spread = this
+    sb.count = - count
+    sb
+  }
+
+  def long (count : Integer) : SpreadBuilder = {
+    val sb = new SpreadBuilder
+    sb.spread = this
+    sb.count = count
+    sb
+  }
+
   def copy() : Spread = {
     val copy = new Spread
     for (o : Option <- options) {
@@ -233,9 +247,6 @@ class Spread {
 
     maxgain
   }
-
-
-
 
   override def toString() : String = {
     var s : String = ""
