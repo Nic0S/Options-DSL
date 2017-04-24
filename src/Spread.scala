@@ -9,6 +9,8 @@ class Spread {
 
   var maxXPrice : Double = -1
 
+  val formatter = java.text.NumberFormat.getCurrencyInstance
+
   def and (op : Option) : Spread = {
     val copy : Spread = this.copy()
     copy.options = copy.options :+ op
@@ -78,9 +80,9 @@ class Spread {
 
     while (testPrice < end) {
       if (metric.toLowerCase().equals("value")) {
-        println(testPrice + " " + calculateValue(testPrice))
+        println(formatter.format(testPrice) + "\t\t\t" + formatter.format(calculateValue(testPrice)))
       } else {
-        println(testPrice + " " + calculatePL(testPrice))
+        println(formatter.format(testPrice) + "\t\t\t" + formatter.format(calculatePL(testPrice)))
       }
 
       testPrice += stepSize
