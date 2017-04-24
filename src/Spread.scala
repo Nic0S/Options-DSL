@@ -7,6 +7,8 @@ class Spread {
 
   var options = List[Option]()
 
+  var maxXPrice : Double = -1
+
   def and (op : Option) : Spread = {
     val copy : Spread = this.copy()
     copy.options = copy.options :+ op
@@ -118,6 +120,8 @@ class Spread {
       require(o.daysToExp >= daysLater, "Cannot value options post expiration")
       modified.options = modified.options :+ (o expiration (o.daysToExp - daysLater))
     }
+
+    modified
   }
 
   def volatility (vol : Double) : Spread = {
@@ -138,6 +142,96 @@ class Spread {
     }
 
     modified
+  }
+
+  def maxloss () : Double = {
+    var maxStrike : Double = 0
+    var minStrike = Double.MaxValue
+
+    for (o : Option <- options) {
+      if (o.strikePrice > maxStrike) {
+        maxStrike = o.strikePrice
+      }
+      if (o.strikePrice < minStrike) {
+        minStrike = o.strikePrice
+      }
+    }
+
+    var expired : Spread = this expiration 0
+
+    var step : Double = (maxStrike - minStrike) / 100
+
+    var strike : Double = 0
+
+    var maxloss : Double = Double.MinValue
+
+    while (strike < maxStrike) {
+      val loss =  - expired.calculatePL(strike)
+      if (loss > maxloss) {
+        maxloss = loss
+        maxXPrice = strike
+      }
+      strike += step
+    }
+
+    var loss : Double = - expired.calculatePL(0)
+    if (loss > maxloss) {
+      maxloss = loss
+      maxXPrice = 0
+    }
+
+    loss = - expired.calculatePL(Double.MaxValue)
+    if (loss > maxloss) {
+      maxloss = loss
+      maxXPrice = Double.MaxValue
+    }
+
+    maxloss
+  }
+
+  def maxgain () : Double = {
+    var maxStrike : Double = 0
+    var minStrike = Double.MaxValue
+
+    for (o : Option <- options) {
+      if (o.strikePrice > maxStrike) {
+        maxStrike = o.strikePrice
+      }
+      if (o.strikePrice < minStrike) {
+        minStrike = o.strikePrice
+      }
+    }
+
+    var expired : Spread = this expiration 0
+
+    var step : Double = (maxStrike - minStrike) / 100
+
+    var strike : Double = 0
+
+    var maxgain : Double = Double.MinValue
+
+    while (strike < maxStrike) {
+      val gain = expired.calculatePL(strike)
+      if (gain > maxgain) {
+        maxgain = gain
+        maxXPrice = strike
+      }
+      strike += step
+    }
+
+    var gain : Double = expired.calculatePL(0)
+    if (gain > maxgain) {
+      maxgain = gain
+      maxXPrice = 0
+    }
+
+    gain = expired.calculatePL(Double.MaxValue)
+    if (gain > maxgain) {
+      maxgain = gain
+      maxXPrice = Double.MaxValue
+    }
+
+    maxgain
   }
 
 

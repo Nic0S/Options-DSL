@@ -28,4 +28,13 @@ class OptionsDSL {
       spread and op
     }
   }
+
+  def maxloss (sp : Spread) : Double = {
+    sp maxloss
+  }
+
+  def maxgain (sp : Spread) : Double = {
+    sp maxgain
+  }
+
 }
