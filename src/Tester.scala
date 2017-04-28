@@ -1,6 +1,4 @@
 
-import info.monitorenter.gui.chart.Chart2D;
-
 object Tester extends OptionsDSL {
   def main ( args: Array[String]) = {
     // Option.put("NVDA").strike(95.5).expiration(10)
@@ -26,7 +24,7 @@ object Tester extends OptionsDSL {
     Stats of (spread2 time 10 volatility 0.2)
     PL of (spread2 volatility 0.5)
 
-    var chart : Chart2D = new Chart2D
+    Plot of (spread2 expiration 0) min 80 max 120 show()
 
   }
 }
