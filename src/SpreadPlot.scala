@@ -16,6 +16,7 @@ class SpreadPlot {
 
   var min : Double = -1
   var max : Double = -1
+  var step : Integer = -1
 
   def yAxis (t : String) : SpreadPlot = {
     val copy : SpreadPlot = this.copy()
@@ -68,6 +69,9 @@ class SpreadPlot {
     chart.getAxisY.setRangePolicy(new RangePolicyFixedViewport(new Range(1, 100)))
     chart.getAxisY().setAxisTitle(new AxisTitle("PL"))
 
+    var minYVal : Double = Double.MaxValue
+    var maxYVal : Double = Double.MinValue
+
     var xTitle = ""
     var yTitle = ""
     if (xAxis.equals("underlying")) {
@@ -81,28 +85,28 @@ class SpreadPlot {
 
       val step : Double = (max - min) / 100
 
-      var minYVal : Double = Double.MaxValue
-      var maxYVal : Double = Double.MinValue
-
       var price : Double = min
       while (price < max) {
+        var yVal : Double = -1
         if (pl) {
           yTitle = "Profit / Loss"
-          val yVal = spread.calculatePL(price)
-          if (yVal < minYVal) {
-            minYVal = yVal
-          }
-          if (yVal > maxYVal) {
-            maxYVal = yVal
-          }
-          println("adding point " + price + " " + yVal)
-          trace.addPoint(price, yVal)
+          yVal = spread.calculatePL(price)
+        } else {
+          yTitle = "Value"
+          yVal = spread.calculateValue(price)
         }
 
+        if (yVal < minYVal) {
+          minYVal = yVal
+        }
+        if (yVal > maxYVal) {
+          maxYVal = yVal
+        }
+
+        trace.addPoint(price, yVal)
 
         price += step
       }
-      println(minYVal)
       if (minYVal < 0) {
         minYVal *= 1.3
       } else {
@@ -115,27 +119,67 @@ class SpreadPlot {
         minYVal *= 1.3
       }
 
-      chart.getAxisX().setAxisTitle(new AxisTitle(xTitle))
-      chart.getAxisY().setAxisTitle(new AxisTitle(yTitle))
-      chart.getAxisY.setRangePolicy(new RangePolicyFixedViewport(new Range(minYVal, maxYVal)))
 
-      val zeroTrace : ITrace2D = new Trace2DSimple
-      chart addTrace zeroTrace
-      zeroTrace.addPoint(min, 0)
-      zeroTrace.addPoint(max, 0)
+    } else if (xAxis.equals("time")) {
+      xTitle = "Time since purchase"
+      require(spread.options.head.origUnderlyingPrice != -1,
+        "Original underlying price must be set for time graph, use fillCost")
 
-      val frame : JFrame = new JFrame("Chart");
+      if (min == -1) {
+        min = 0
+      }
+      if (max == -1) {
+        max = spread.options.head.daysToExp
+      }
+      if (step == -1) {
+        step = 1
+      }
 
-      frame.getContentPane().add(chart)
-      frame.setSize(400, 300)
-      frame.addWindowListener(
-        new WindowAdapter() {
-          override def windowClosing (e : WindowEvent) : Unit = {
-            System.exit(0)
-          }
+      var time : Integer = min.toInt
+
+      while (time < max) {
+        var yVal : Double = -1
+        if (pl) {
+          yTitle = "Profit / Loss"
+          yVal = spread.time(time).calculatePL(spread.options.head.origUnderlyingPrice)
+
+        } else {
+          yTitle = "Value"
+          yVal = spread.time(time).calculateValue(spread.options.head.origUnderlyingPrice)
         }
-      )
-      frame.setVisible(true)
+        trace.addPoint(time.toDouble, yVal)
+
+        if (yVal < minYVal) {
+          minYVal = yVal
+        }
+        if (yVal > maxYVal) {
+          maxYVal = yVal
+        }
+
+        time += step
+      }
     }
+
+    chart.getAxisX().setAxisTitle(new AxisTitle(xTitle))
+    chart.getAxisY().setAxisTitle(new AxisTitle(yTitle))
+    chart.getAxisY.setRangePolicy(new RangePolicyFixedViewport(new Range(minYVal, maxYVal)))
+
+    val zeroTrace : ITrace2D = new Trace2DSimple
+    chart addTrace zeroTrace
+    zeroTrace.addPoint(min, 0)
+    zeroTrace.addPoint(max, 0)
+
+    val frame : JFrame = new JFrame("Chart");
+
+    frame.getContentPane().add(chart)
+    frame.setSize(400, 300)
+    frame.addWindowListener(
+      new WindowAdapter() {
+        override def windowClosing (e : WindowEvent) : Unit = {
+          System.exit(0)
+        }
+      }
+    )
+    frame.setVisible(true)
   }
 }

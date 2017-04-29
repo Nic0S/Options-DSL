@@ -102,6 +102,12 @@ class OptionsDSL {
       plot.spread = sp
       plot
     }
+
+    def of (op : Option) : SpreadPlot = {
+      val plot : SpreadPlot = new SpreadPlot
+      plot.spread = Spread of op
+      plot
+    }
   }
 
   def maxloss (sp : Spread) : Double = {

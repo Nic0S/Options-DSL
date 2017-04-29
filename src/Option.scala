@@ -8,6 +8,7 @@ class Option {
   var volatility : Double = -1
   var isCall = true
   var costBasis : Double = 0
+  var origUnderlyingPrice : Double = -1;
 
   var interestRate = 0.01
 
@@ -69,12 +70,14 @@ class Option {
     copy.isCall = isCall
     copy.interestRate = interestRate
     copy.costBasis = costBasis
+    copy.origUnderlyingPrice = origUnderlyingPrice
     copy
   }
 
   def fillCost (underlyingPrice : Double) : Option = {
     val modified = copy()
     modified.costBasis = modified calculateValue underlyingPrice
+    modified.origUnderlyingPrice = underlyingPrice
     modified
   }
 

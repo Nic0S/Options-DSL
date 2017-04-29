@@ -24,7 +24,7 @@ object Tester extends OptionsDSL {
     Stats of (spread2 time 10 volatility 0.2)
     PL of (spread2 volatility 0.5)
 
-    Plot of (spread2 expiration 0) min 80 max 120 show()
+    Plot of spread2 yAxis "PL" xAxis "time" show()
 
   }
 }
