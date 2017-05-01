@@ -18,6 +18,12 @@ class Option {
     modified
   }
 
+  def time (t : Integer) : Option = {
+    val modified = copy()
+    modified.daysToExp -= t
+    modified
+  }
+
   def expiration (d : Int) : Option = {
     val modified = copy()
     modified.daysToExp = d

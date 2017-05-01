@@ -89,6 +89,10 @@ class Spread {
     }
   }
 
+  def printValue (underlyingPrice : Double ) : Unit = {
+    println(formatter.format(calculateValue(underlyingPrice)))
+  }
+
   def calculateValue (underlyingPrice : Double) : Double = {
     var totalPrice : Double = 0
 
@@ -175,7 +179,7 @@ class Spread {
 
     var expired : Spread = this expiration 0
 
-    var step : Double = (maxStrike - minStrike) / 100
+    var step : Double = maxStrike / 100
 
     var strike : Double = 0
 
@@ -220,13 +224,13 @@ class Spread {
 
     var expired : Spread = this expiration 0
 
-    var step : Double = (maxStrike - minStrike) / 100
+    var step : Double = maxStrike / 100
 
     var strike : Double = 0
 
     var maxgain : Double = Double.MinValue
 
-    while (strike < maxStrike) {
+    while (strike < maxStrike * 2) {
       val gain = expired.calculatePL(strike)
       if (gain > maxgain) {
         maxgain = gain

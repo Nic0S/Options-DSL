@@ -2,7 +2,6 @@ import java.awt.event.{WindowAdapter, WindowEvent}
 import javax.swing.JFrame
 
 import info.monitorenter.gui.chart.IAxis.AxisTitle
-import info.monitorenter.gui.chart.axis.scalepolicy.AxisScalePolicyAutomaticBestFit
 import info.monitorenter.gui.chart.rangepolicies.RangePolicyFixedViewport
 import info.monitorenter.gui.chart.traces.{Trace2DBijective, Trace2DLtd, Trace2DSimple}
 import info.monitorenter.gui.chart.{Chart2D, ITrace2D}
@@ -116,7 +115,7 @@ class SpreadPlot {
       if (maxYVal < 0) {
         maxYVal *=   .7
       } else {
-        minYVal *= 1.3
+        maxYVal *= 1.3
       }
 
 
