@@ -8,14 +8,10 @@ class SpreadBuilder {
     require(count != 0, "SpreadBuilder without count provided")
 
     if (spread == null) {
-      if (op.costBasis > 0) {
-        op.costBasis = -op.costBasis
-      }
+      op.costBasis *= count
       new Spread and (op contracts count)
     } else {
-      if (op.costBasis > 0) {
-        op.costBasis = -op.costBasis
-      }
+      op.costBasis *= count
       spread and (op contracts count)
     }
   }

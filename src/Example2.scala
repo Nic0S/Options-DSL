@@ -15,7 +15,6 @@ object Example2 extends OptionsDSL {
 
     println(call calculatePL 100)
 
-//    Plot of (spread time 30) min 70 max 130 xAxis "underlying" yAxis "PL" show()
 
     Plot of spread min 10 max 30 xAxis "time" yAxis "Value" show()
 

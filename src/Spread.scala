@@ -1,22 +1,28 @@
 import java.util
 
 class Spread {
+
+  // Variables used for printing
   var stepSize : Double = -1
   var start : Double = -1
   var end : Double = -1
 
+  // The options that make up this spread
   var options = List[Option]()
 
   var maxXPrice : Double = -1
 
+  // Formats Doubles into dollar values
   val formatter = java.text.NumberFormat.getCurrencyInstance
 
+  // Adds another option to this spread
   def and (op : Option) : Spread = {
     val copy : Spread = this.copy()
     copy.options = copy.options :+ op
     copy
   }
 
+  // Adds a sold option to this spread
   def short (count : Integer) : SpreadBuilder = {
     val sb = new SpreadBuilder
     sb.spread = this
@@ -24,6 +30,8 @@ class Spread {
     sb
   }
 
+
+  // Adds an option to this spread
   def long (count : Integer) : SpreadBuilder = {
     val sb = new SpreadBuilder
     sb.spread = this
@@ -31,6 +39,7 @@ class Spread {
     sb
   }
 
+  // Makes a deep copy of this spread by copying each option
   def copy() : Spread = {
     val copy = new Spread
     for (o : Option <- options) {
@@ -42,12 +51,14 @@ class Spread {
     copy
   }
 
+  // Defines the minimum for printing
   def start (p : Double) : Spread = {
     val modified = this copy()
     modified.start = p
     modified
   }
 
+  // Defines the maximum for printing
   def end (p : Double) : Spread = {
     val modified = this copy()
     modified.end = p
@@ -89,9 +100,11 @@ class Spread {
     }
   }
 
+  // Cumulative value of all options in this spread
   def printValue (underlyingPrice : Double ) : Unit = {
     println(formatter.format(calculateValue(underlyingPrice)))
   }
+
 
   def calculateValue (underlyingPrice : Double) : Double = {
     var totalPrice : Double = 0
@@ -103,6 +116,7 @@ class Spread {
     totalPrice
   }
 
+  // Combined profit / loss of all options in this spread
   def calculatePL (underlyingPrice : Double) : Double = {
     var totalPL : Double = 0
 
@@ -113,6 +127,7 @@ class Spread {
     totalPL
   }
 
+  // Total amount paid for all options in the spread
   def totalCost () : Double = {
     var totalCost : Double = 0
 
@@ -123,6 +138,7 @@ class Spread {
     totalCost
   }
 
+  // Sets the expiration for all options in the spread.
   def expiration (daysToExp : Int) : Spread = {
     val modified : Spread = new Spread
 
@@ -133,6 +149,7 @@ class Spread {
     modified
   }
 
+  // Subtracts days from every option in the spread. The expiration cannot be less than zero after this is done.
   def time (daysLater : Int) : Spread = {
     val modified : Spread = new Spread
 
@@ -144,6 +161,7 @@ class Spread {
     modified
   }
 
+  // Edits the volatility for all options in the spread.
   def volatility (vol : Double) : Spread = {
     val modified : Spread = new Spread
 
@@ -154,6 +172,7 @@ class Spread {
     modified
   }
 
+  // Modifies the interest rate for all options in the spread.
   def irate (i : Double) : Spread = {
     val modified : Spread = new Spread
 
@@ -164,6 +183,7 @@ class Spread {
     modified
   }
 
+  // Get the max loss for the entire combined spread.
   def maxloss () : Double = {
     var maxStrike : Double = 0
     var minStrike = Double.MaxValue
